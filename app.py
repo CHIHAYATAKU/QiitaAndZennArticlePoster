@@ -38,12 +38,12 @@ class PostingArticlesApp:
         self.body_label.pack()
 
         # ツールバーにボタンを追加
-        self.bold_button = Button(self.frame_body, text="h1", command=self.insert_h1)
-        self.bold_button.pack(side=tk.LEFT)
-        self.italic_button = Button(
-            self.frame_body, text="Italic", command=self.make_italic
-        )
-        self.italic_button.pack(side=tk.LEFT)
+        self.h2_button = Button(self.frame_body, text="章", command=self.insert_h2)
+        self.h2_button.pack(side=tk.LEFT)
+        self.h3_button = Button(self.frame_body, text="節", command=self.insert_h3)
+        self.h3_button.pack(side=tk.LEFT)
+        self.h4_button = Button(self.frame_body, text="項", command=self.insert_h4)
+        self.h4_button.pack(side=tk.LEFT)
 
         self.frame = Frame(root, width=70, height=80)
         self.frame.pack(fill=tk.Y, expand=False)
@@ -65,9 +65,17 @@ class PostingArticlesApp:
         self.post_button = Button(root, text="Post Article", command=self.post_article)
         self.post_button.pack()
 
-    def insert_h1(self):
+    def insert_h2(self):
         current_cursor_pos = self.body_input.index(tk.INSERT)
-        self.body_input.insert(current_cursor_pos, "##")
+        self.body_input.insert(current_cursor_pos, "## ")
+
+    def insert_h3(self):
+        current_cursor_pos = self.body_input.index(tk.INSERT)
+        self.body_input.insert(current_cursor_pos, "### ")
+
+    def insert_h4(self):
+        current_cursor_pos = self.body_input.index(tk.INSERT)
+        self.body_input.insert(current_cursor_pos, "#### ")
 
     def make_italic(self):
         current_tags = self.body_input.tag_names("sel.first")
@@ -90,19 +98,19 @@ class PostingArticlesApp:
 
         # ファイルダイアログを表示して保存場所を選択
         file_path = filedialog.asksaveasfilename(
-            defaultextension=".txt",
-            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=f"{title}.txt",
+            defaultextension=".md",
+            filetypes=[("Markdown files", "*.md"), ("All files", "*.*")],
+            initialfile=f"{title}.md",
             title="Save Article",
         )
 
         if file_path:
             with open(file_path, "w", encoding="utf-8") as file:
-                file.write(f"Title: \n{title}\n\n")
-                file.write(f"Body:\n{body}\n\n")
-                file.write(f"Tags: \n{tags}\n")
+                file.write(f"# {title}\n\n")
+                file.write(f"{body}\n\n")
+                file.write(f"**Tags:** {tags}\n")
 
-            print(f"Article saved to {file_path}")
+        print(f"Article saved to {file_path}")
 
     def post_article(self):
         # 記事を投稿する処理
