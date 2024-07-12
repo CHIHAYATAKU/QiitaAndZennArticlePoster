@@ -5,7 +5,6 @@ import tkinter as tk
 from tkinter import Tk, Label, Entry, Text, Button, END, Frame, filedialog
 import requests
 from urllib.parse import urlencode
-from config.config import REPO_PATH
 from modules.HandLingGit import git_add, git_commit, git_push
 
 
@@ -14,6 +13,8 @@ class PostingArticlesApp:
         self.root = root
         self.root.title("Article Poster")
         self.root.geometry("700x600")
+
+        self.repo_path = os.getenv("REPO_PATH", "")
 
         # メニューバーを作成
         menubar = tk.Menu(self.root)
@@ -62,7 +63,11 @@ class PostingArticlesApp:
         self.tags_input = Entry(root, width=70)
         self.tags_input.pack()
 
-        self.post_button = Button(root, text="Post Article", command=self.post_article)
+        self.post_button = Button(
+            root,
+            text="Post Article",
+            command=self.post_article,
+        )
         self.post_button.pack()
 
     def insert_h2(self):
@@ -97,7 +102,7 @@ class PostingArticlesApp:
         tags = self.tags_input.get()
 
         # フォルダを指定
-        folder_path = os.path.join(REPO_PATH, "Qiita")
+        folder_path = os.path.join(self.repo_path, "Qiita")
         os.makedirs(folder_path, exist_ok=True)
 
         # ファイル名とパスを作成
@@ -110,9 +115,10 @@ class PostingArticlesApp:
             file.write(f"{body}\n\n")
             file.write(f"**Tags:** {tags}\n")
 
-        print(f"Article saved to {file_path}")
+        print(f"Article saved to {file_path}\n")
 
     def post_article(self):
+        self.save_article()
         # 記事を投稿する処理
         title = self.title_input.get()
         body = self.body_input.get("1.0", END)
@@ -120,16 +126,16 @@ class PostingArticlesApp:
         # 投稿する処理を追加することができます
         # 使用例
         try:
-            git_add(cwd=REPO_PATH)
-            git_commit("add: articles", cwd=REPO_PATH)
-            print("ローカルでのGit操作が成功しました")
+            git_add(cwd=self.repo_path)
+            git_commit("add: articles", cwd=self.repo_path)
+            print("ローカルでのGit操作が成功しました\n")
         except Exception as e:
-            print(f"Git操作に失敗しました: {e}")
+            print(f"Git操作に失敗しました: {e}\n")
         try:
-            git_push(cwd=REPO_PATH)
-            print("リモートリポジトリへのpush操作が成功しました")
+            git_push(cwd=self.repo_path)
+            print("リモートリポジトリへのpush操作が成功しました\n")
         except Exception as e:
-            print(f"リモートリポジトリへのpush操作に失敗しました: {e}")
+            print(f"リモートリポジトリへのpush操作に失敗しました: {e}\n")
         print(f"Title: {title}")
         print(f"Body: {body}")
         print(f"Tags: {tags}")
