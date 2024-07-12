@@ -19,5 +19,5 @@ def git_commit(message, cwd=None):
     return run_git_command(f'git commit -m "{message}"', cwd)
 
 
-def git_push(remote="origin", branch="master", cwd=None):
+def git_push(remote="origin", branch="main", cwd=None):
     return run_git_command(f"git push -f {remote} {branch}", cwd)

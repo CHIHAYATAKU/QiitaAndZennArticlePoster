@@ -96,19 +96,19 @@ class PostingArticlesApp:
         body = self.body_input.get("1.0", END)
         tags = self.tags_input.get()
 
-        # ファイルダイアログを表示して保存場所を選択
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".md",
-            filetypes=[("Markdown files", "*.md"), ("All files", "*.*")],
-            initialfile=f"{title}.md",
-            title="Save Article",
-        )
+        # フォルダを指定
+        folder_path = os.path.join(REPO_PATH, "Qiita")
+        os.makedirs(folder_path, exist_ok=True)
 
-        if file_path:
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(f"# {title}\n\n")
-                file.write(f"{body}\n\n")
-                file.write(f"**Tags:** {tags}\n")
+        # ファイル名とパスを作成
+        file_name = f"{title}.md"
+        file_path = os.path.join(folder_path, file_name)
+
+        # ファイルを保存
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(f"# {title}\n\n")
+            file.write(f"{body}\n\n")
+            file.write(f"**Tags:** {tags}\n")
 
         print(f"Article saved to {file_path}")
 
@@ -119,15 +119,14 @@ class PostingArticlesApp:
         tags = self.tags_input.get().split(",")
         # 投稿する処理を追加することができます
         # 使用例
-        repo_path = REPO_PATH
         try:
-            git_add(cwd=repo_path)
-            git_commit("add: articles", cwd=repo_path)
+            git_add(cwd=REPO_PATH)
+            git_commit("add: articles", cwd=REPO_PATH)
             print("ローカルでのGit操作が成功しました")
         except Exception as e:
             print(f"Git操作に失敗しました: {e}")
         try:
-            git_push(cwd=repo_path)
+            git_push(cwd=REPO_PATH)
             print("リモートリポジトリへのpush操作が成功しました")
         except Exception as e:
             print(f"リモートリポジトリへのpush操作に失敗しました: {e}")
