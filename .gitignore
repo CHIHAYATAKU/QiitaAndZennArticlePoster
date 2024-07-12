@@ -1,6 +1,6 @@
 /bin/
 /out/
-/__pychae__/
+/__pycache__/
 /config/
 *.xlsx
 /QiitaAndZennArticles/
