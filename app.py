@@ -1,11 +1,19 @@
 import os
 import webbrowser
 import threading
+from datetime import date
 import tkinter as tk
 from tkinter import Tk, Label, Entry, Text, Button, END, Frame, filedialog
 import requests
 from urllib.parse import urlencode
-from modules.HandLingGit import git_add, git_commit, git_push
+from modules.HandLingGit import (
+    git_add,
+    git_commit,
+    git_push,
+    git_switch,
+    git_new_switch,
+    git_switch_main,
+)
 
 
 class PostingArticlesApp:
@@ -100,14 +108,19 @@ class PostingArticlesApp:
         title = self.title_input.get()
         body = self.body_input.get("1.0", END)
         tags = self.tags_input.get()
+        if git_switch(cwd=self.repo_path, branch="qiita") != False:
+            print("qiitaへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="qiita")
+            print("qiitaブランチを作成しました\n")
 
         # フォルダを指定
-        folder_path = os.path.join(self.repo_path, "Qiita")
-        os.makedirs(folder_path, exist_ok=True)
+        folder_path_qiita = os.path.join(self.repo_path, "Qiita")
+        os.makedirs(folder_path_qiita, exist_ok=True)
 
         # ファイル名とパスを作成
-        file_name = f"{title}.md"
-        file_path = os.path.join(folder_path, file_name)
+        file_name = f"{date.today().isoformat()}.md"
+        file_path = os.path.join(folder_path_qiita, file_name)
 
         # ファイルを保存
         with open(file_path, "w", encoding="utf-8") as file:
@@ -115,6 +128,51 @@ class PostingArticlesApp:
             file.write(f"{body}\n\n")
             file.write(f"**Tags:** {tags}\n")
 
+        try:
+            git_add(cwd=self.repo_path)
+            git_commit("add: articles", cwd=self.repo_path)
+            print("ローカルでのGit操作が成功しました\n")
+        except Exception as e:
+            print(f"qiita:Git操作に失敗しました: {e}\n")
+        if git_switch_main(cwd=self.repo_path) != False:
+            print("mainへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="main")
+            print("mainブランチを作成しました\n")
+
+        print(f"Article saved to {file_path}\n")
+
+        if git_switch(cwd=self.repo_path, branch="zenn") != False:
+            print("zennへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="zenn")
+            print("zennブランチを作成しました\n")
+
+        # フォルダを指定
+        folder_path_zenn = os.path.join(self.repo_path, "Zenn")
+        os.makedirs(folder_path_zenn, exist_ok=True)
+
+        # ファイル名とパスを作成
+        file_name = f"{date.today().isoformat()}.md"
+        file_path = os.path.join(folder_path_zenn, file_name)
+
+        # ファイルを保存
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(f"# {title}\n\n")
+            file.write(f"{body}\n\n")
+            file.write(f"**Tags:** {tags}\n")
+
+        try:
+            git_add(cwd=self.repo_path)
+            git_commit("add: articles", cwd=self.repo_path)
+            print("ローカルでのGit操作が成功しました\n")
+        except Exception as e:
+            print(f"qiita:Git操作に失敗しました: {e}\n")
+        if git_switch_main(cwd=self.repo_path) != False:
+            print("mainへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="main")
+            print("mainブランチを作成しました\n")
         print(f"Article saved to {file_path}\n")
 
     def post_article(self):
@@ -123,22 +181,36 @@ class PostingArticlesApp:
         title = self.title_input.get()
         body = self.body_input.get("1.0", END)
         tags = self.tags_input.get().split(",")
-        # 投稿する処理を追加することができます
-        # 使用例
+
+        git_switch(cwd=self.repo_path, branch="qiita")
         try:
-            git_add(cwd=self.repo_path)
-            git_commit("add: articles", cwd=self.repo_path)
-            print("ローカルでのGit操作が成功しました\n")
-        except Exception as e:
-            print(f"Git操作に失敗しました: {e}\n")
-        try:
-            git_push(cwd=self.repo_path)
+            git_push(cwd=self.repo_path, branch="qiita")
             print("リモートリポジトリへのpush操作が成功しました\n")
         except Exception as e:
             print(f"リモートリポジトリへのpush操作に失敗しました: {e}\n")
         print(f"Title: {title}")
         print(f"Body: {body}")
         print(f"Tags: {tags}")
+        if git_switch_main(cwd=self.repo_path) != False:
+            print("mainへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="main")
+            print("mainブランチを作成しました\n")
+
+        git_switch(cwd=self.repo_path, branch="zenn")
+        try:
+            git_push(cwd=self.repo_path, branch="zenn")
+            print("リモートリポジトリへのpush操作が成功しました\n")
+        except Exception as e:
+            print(f"リモートリポジトリへのpush操作に失敗しました: {e}\n")
+        print(f"Title: {title}")
+        print(f"Body: {body}")
+        print(f"Tags: {tags}")
+        if git_switch_main(cwd=self.repo_path) != False:
+            print("mainへのブランチ切り替えが成功しました\n")
+        else:
+            git_new_switch(cwd=self.repo_path, branch="main")
+            print("mainブランチを作成しました\n")
 
 
 if __name__ == "__main__":
