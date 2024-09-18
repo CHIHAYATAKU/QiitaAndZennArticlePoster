@@ -1,5 +1,5 @@
 # Qiita and Zenn Article Poster
-全然途中です
+#全然途中です
 このアプリケーションは、QiitaとZennに記事を同時に管理・投稿するためのツールです。
 
 ## 必要な環境変数
